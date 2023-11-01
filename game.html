@@ -1,149 +1,497 @@
-<!DOCTYPE html> 
-<html lang="ru"> 
-    <head> 
-        <meta charset="UTF-8"> 
-        <title>Проект 1</title> 
- 
-    </head> 
-    <style> 
-      :root { 
-  --card-height: 300px; 
-  --card-width: calc(var(--card-height) / 1.5); 
-} 
-* { 
-  box-sizing: border-box; 
-} 
-body { 
-  width: 100vw; 
-  height: 100vh; 
-  margin: 0; 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-  background: #191c29; 
-} 
-.card { 
-  width: var(--card-width); 
-  height: var(--card-height); 
-  position: relative; 
-  display: flex; 
-  justify-content: center; 
-  align-items: flex-end; 
-  padding: 0 36px; 
-  perspective: 2500px; 
-  margin: 0 50px; 
-} 
- 
-.cover-image { 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover; 
-} 
- 
-.wrapper { 
-  transition: all 0.5s; 
-  position: absolute; 
-  width: 100%; 
-  z-index: -1; 
-} 
- 
-.card:hover .wrapper { 
-  transform: perspective(900px) translateY(-5%) rotateX(25deg) translateZ(0); 
-  box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75); 
-  -webkit-box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75); 
-  -moz-box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75); 
-} 
- 
-.wrapper::before, 
-.wrapper::after { 
-  content: ""; 
-  opacity: 0; 
-  width: 100%; 
-  height: 80px; 
-  transition: all 0.5s; 
-  position: absolute; 
-  left: 0; 
-} 
-.wrapper::before { 
-  top: 0; 
-  height: 100%; 
-  background-image: linear-gradient( 
-    to top, 
-    transparent 46%, 
-    rgba(12, 13, 19, 0.5) 68%, 
-    rgba(12, 13, 19) 97% 
-  ); 
-} 
-.wrapper::after { 
-  bottom: 0; 
-  opacity: 1; 
-  background-image: linear-gradient( 
-    to bottom, 
-    transparent 46%, 
-    rgba(12, 13, 19, 0.5) 68%, 
-    rgba(12, 13, 19) 97% 
-  ); 
-} 
- 
-.card:hover .wrapper::before, 
-.wrapper::after { 
-  opacity: 1; 
-} 
- 
-.card:hover .wrapper::after { 
-  height: 120px; 
-} 
-.title { 
-  width: 100%; 
-  transition: transform 0.5s; 
-} 
-.card:hover .title { 
-  transform: translate3d(0%, -50px, 100px); 
-} 
- 
-.character { 
-  width: 100%; 
-  opacity: 0; 
-  transition: all 0.5s; 
-  position: absolute; 
-  z-index: -1; 
-} 
- 
-.card:hover .character { 
-  opacity: 1; 
-  transform: translate3d(0%, -30%, 100px); 
-} 
- 
- 
-    </style> 
- 
-    <body> 
-        <a href="https://www.mythrillfiction.com/the-dark-rider" alt="Mythrill" target="_blank"> 
-            <div class="card"> 
-              <div class="wrapper"> 
-                <img src="https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg" class="cover-image" /> 
-              </div> 
-              <img src="https://ggayane.github.io/css-experiments/cards/dark_rider-title.png" class="title" /> 
-              <img src="https://ggayane.github.io/css-experiments/cards/dark_rider-character.webp" class="character" /> 
-            </div> 
-          </a> 
-           
-          <a href="https://www.mythrillfiction.com/force-mage" alt="Mythrill" target="_blank"> 
-            <div class="card"> 
-              <div class="wrapper"> 
-                <img src="https://ggayane.github.io/css-experiments/cards/force_mage-cover.jpg" class="cover-image" /> 
-              </div> 
-              <img src="https://ggayane.github.io/css-experiments/cards/force_mage-title.png" class="title" /> 
-              <img src="https://ggayane.github.io/css-experiments/cards/force_mage-character.webp" class="character" /> 
-            </div> 
-          </a> 
-    </body> 
- 
-    <script> 
-     
- 
- 
- 
-    </script> 
- 
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>Проект 1</title>
+
+    </head>
+    <style>
+
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap");
+
+:root {
+  --bg: #000000;
+  --clr-1: #00c2ff;
+  --clr-2: #33ff8c;
+  --clr-3: #ffc640;
+  --clr-4: #e54cff;
+
+  --blur: 1rem;
+  --fs: clamp(3rem, 8vw, 7rem);
+  --ls: clamp(-1.75px, -0.25vw, -3.5px);
+}
+
+body {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background-color: var(--bg);
+  color: #fff;
+  background-color: hsl(256, 100%, 5%); font: 30px sans-serif;
+}
+canvas { position: absolute; }   
+*,
+*::before,
+*::after {
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.content {
+  text-align: center;
+}
+
+.title {
+  font-size: var(--fs);
+  font-weight: 800;
+  letter-spacing: var(--ls);
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+  margin: 0;
+}
+
+.subtitle {
+}
+
+.aurora {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  mix-blend-mode: darken;
+  pointer-events: none;
+}
+
+.aurora__item {
+  overflow: hidden;
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  background-color: var(--clr-1);
+  border-radius: 37% 29% 27% 27% / 28% 25% 41% 37%;
+  filter: blur(var(--blur));
+  mix-blend-mode: overlay;
+}
+
+.aurora__item:nth-of-type(1) {
+  top: -50%;
+  animation: aurora-border 6s ease-in-out infinite,
+    aurora-1 12s ease-in-out infinite alternate;
+}
+
+.aurora__item:nth-of-type(2) {
+  background-color: var(--clr-3);
+  right: 0;
+  top: 0;
+  animation: aurora-border 6s ease-in-out infinite,
+    aurora-2 12s ease-in-out infinite alternate;
+}
+
+.aurora__item:nth-of-type(3) {
+  background-color: var(--clr-2);
+  left: 0;
+  bottom: 0;
+  animation: aurora-border 6s ease-in-out infinite,
+    aurora-3 8s ease-in-out infinite alternate;
+}
+
+.aurora__item:nth-of-type(4) {
+  background-color: var(--clr-4);
+  right: 0;
+  bottom: -50%;
+  animation: aurora-border 6s ease-in-out infinite,
+    aurora-4 24s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-1 {
+  0% {
+    top: 0;
+    right: 0;
+  }
+
+  50% {
+    top: 100%;
+    right: 75%;
+  }
+
+  75% {
+    top: 100%;
+    right: 25%;
+  }
+
+  100% {
+    top: 0;
+    right: 0;
+  }
+}
+
+@keyframes aurora-2 {
+  0% {
+    top: -50%;
+    left: 0%;
+  }
+
+  60% {
+    top: 100%;
+    left: 75%;
+  }
+
+  85% {
+    top: 100%;
+    left: 25%;
+  }
+
+  100% {
+    top: -50%;
+    left: 0%;
+  }
+}
+
+@keyframes aurora-3 {
+  0% {
+    bottom: 0;
+    left: 0;
+  }
+
+  40% {
+    bottom: 100%;
+    left: 75%;
+  }
+
+  65% {
+    bottom: 40%;
+    left: 50%;
+  }
+
+  100% {
+    bottom: 0;
+    left: 0;
+  }
+}
+
+@keyframes aurora-4 {
+  0% {
+    bottom: -50%;
+    right: 0;
+  }
+
+  50% {
+    bottom: 0%;
+    right: 40%;
+  }
+
+  90% {
+    bottom: 50%;
+    right: 25%;
+  }
+
+  100% {
+    bottom: -50%;
+    right: 0;
+  }
+}
+
+@keyframes aurora-border {
+  0% {
+    border-radius: 37% 29% 27% 27% / 28% 25% 41% 37%;
+  }
+
+  25% {
+    border-radius: 47% 29% 39% 49% / 61% 19% 66% 26%;
+  }
+
+  50% {
+    border-radius: 57% 23% 47% 72% / 63% 17% 66% 33%;
+  }
+
+  75% {
+    border-radius: 28% 49% 29% 100% / 93% 20% 64% 25%;
+  }
+
+  100% {
+    border-radius: 37% 29% 27% 27% / 28% 25% 41% 37%;
+  }
+}
+
+      :root {
+  --card-height: 300px;
+  --card-width: calc(var(--card-height) / 1.5);
+}
+* {
+  box-sizing: border-box;
+}
+.card {
+  width: var(--card-width);
+  height: var(--card-height);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0 36px;
+  perspective: 2500px;
+  margin: 0 50px;
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.wrapper {
+  transition: all 0.5s;
+  position: absolute;
+  width: 100%;
+  z-index: -1;
+}
+
+.card:hover .wrapper {
+  transform: perspective(900px) translateY(-5%) rotateX(25deg) translateZ(0);
+  box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
+}
+
+.wrapper::before,
+.wrapper::after {
+  content: "";
+  opacity: 0;
+  width: 100%;
+  height: 80px;
+  transition: all 0.5s;
+  position: absolute;
+  left: 0;
+}
+.wrapper::before {
+  top: 0;
+  height: 100%;
+  background-image: linear-gradient(
+    to top,
+    transparent 46%,
+    rgba(12, 13, 19, 0.5) 68%,
+    rgba(12, 13, 19) 97%
+  );
+}
+.wrapper::after {
+  bottom: 0;
+  opacity: 1;
+  background-image: linear-gradient(
+    to bottom,
+    transparent 46%,
+    rgba(12, 13, 19, 0.5) 68%,
+    rgba(12, 13, 19) 97%
+  );
+}
+
+.card:hover .wrapper::before,
+.wrapper::after {
+  opacity: 1;
+}
+
+.card:hover .wrapper::after {
+  height: 120px;
+}
+.title {
+  width: 100%;
+  transition: transform 0.5s;
+}
+.card:hover .title {
+  transform: translate3d(0%, -50px, 100px);
+}
+
+.character {
+  width: 100%;
+  opacity: 0;
+  transition: all 0.5s;
+  position: absolute;
+  z-index: -1;
+}
+
+.card:hover .character {
+  opacity: 1;
+  transform: translate3d(0%, -30%, 100px);
+}
+.galleryy{
+    display: flex;
+}
+
+    </style>
+
+    <body>
+        <canvas id='c'></canvas>
+        <div class="content">
+            <h1 class="title">infinity
+              <div class="aurora">
+                <div class="aurora__item"></div>
+                <div class="aurora__item"></div>
+                <div class="aurora__item"></div>
+                <div class="aurora__item"></div>
+              </div>
+            </h1>
+            <p class="subtitle">ACTION GAME</p>
+          </div>
+          <div class="galleryy">
+            <div class="card">
+              <div class="wrapper">
+                <img src="https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg" class="cover-image" />
+              </div>
+              <img src="https://ggayane.github.io/css-experiments/cards/dark_rider-title.png" class="title" />
+              <img src="https://ggayane.github.io/css-experiments/cards/dark_rider-character.webp" class="character" />
+            </div>
+          </a>
+          
+          <a href="https://www.mythrillfiction.com/force-mage" alt="Mythrill" target="_blank">
+            <div class="card">
+              <div class="wrapper">
+                <img src="https://ggayane.github.io/css-experiments/cards/force_mage-cover.jpg" class="cover-image" />
+              </div>
+              <img src="https://ggayane.github.io/css-experiments/cards/force_mage-title.png" class="title" />
+              <img src="https://ggayane.github.io/css-experiments/cards/force_mage-character.webp" class="character" />
+            </div>
+          </a>
+        </div>
+    </body>
+
+    <script>
+    var PARTICLE_NUM = 500;
+var PARTICLE_BASE_RADIUS = 0.5;
+var FL = 500;
+var DEFAULT_SPEED = 2;
+var BOOST_SPEED = 300;
+
+var canvas;
+var canvasWidth, canvasHeight;
+var context;
+var centerX, centerY;
+var mouseX, mouseY;
+var speed = DEFAULT_SPEED;
+var targetSpeed = DEFAULT_SPEED;
+var particles = [];
+
+window.addEventListener('load', function() {
+    canvas = document.getElementById('c');
+    
+    var resize = function() {
+        canvasWidth  = canvas.width = window.innerWidth;
+        canvasHeight = canvas.height = window.innerHeight;
+        centerX = canvasWidth * 0.5;
+        centerY = canvasHeight * 0.5;
+        context = canvas.getContext('2d');
+        context.fillStyle = 'rgb(255, 255, 255)';
+    };
+    
+    document.addEventListener('resize', resize);
+    resize();
+    
+    mouseX = centerX;
+    mouseY = centerY;
+    
+    for (var i = 0, p; i < PARTICLE_NUM; i++) {
+        particles[i] = randomizeParticle(new Particle());
+        particles[i].z -= 500 * Math.random();
+    }
+    
+    document.addEventListener('mousemove', function(e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    }, false);
+    
+    document.addEventListener('mousedown', function(e) {
+        targetSpeed = BOOST_SPEED;
+    }, false);
+    
+    document.addEventListener('mouseup', function(d) {
+        targetSpeed = DEFAULT_SPEED;
+    }, false);
+    
+    setInterval(loop, 1000 / 60);
+}, false);
+
+function loop() {
+    context.save();
+    context.fillStyle = 'rgb(0, 0, 0)';
+    context.fillRect(0, 0, canvasWidth, canvasHeight);
+    context.restore();
+    
+    speed += (targetSpeed - speed) * 0.01;
+    
+    var p;
+    var cx, cy;
+    var rx, ry;
+    var f, x, y, r;
+    var pf, px, py, pr;
+    var a, a1, a2;
+    
+    var halfPi = Math.PI * 0.5;
+    var atan2  = Math.atan2;
+    var cos    = Math.cos;
+    var sin    = Math.sin;
+    
+    context.beginPath();
+    for (var i = 0; i < PARTICLE_NUM; i++) {
+        p = particles[i];
+        
+        p.pastZ = p.z;
+        p.z -= speed;
+        
+        if (p.z <= 0) {
+            randomizeParticle(p);
+            continue;
+        }
+        
+        cx = centerX - (mouseX - centerX) * 1.25;
+        cy = centerY - (mouseY - centerY) * 1.25;
+        
+        rx = p.x - cx;
+        ry = p.y - cy;
+        
+        f = FL / p.z;
+        x = cx + rx * f;
+        y = cy + ry * f;
+        r = PARTICLE_BASE_RADIUS * f;
+        
+        pf = FL / p.pastZ;
+        px = cx + rx * pf;
+        py = cy + ry * pf;
+        pr = PARTICLE_BASE_RADIUS * pf;
+        
+        a  = atan2(py - y, px - x);
+        a1 = a + halfPi;
+        a2 = a - halfPi;
+        
+        context.moveTo(px + pr * cos(a1), py + pr * sin(a1));
+        context.arc(px, py, pr, a1, a2, true);
+        context.lineTo(x + r * cos(a2), y + r * sin(a2));
+        context.arc(x, y, r, a2, a1, true);
+        context.closePath();
+    }
+    context.fill();
+}
+
+function randomizeParticle(p) {
+    p.x = Math.random() * canvasWidth;
+    p.y = Math.random() * canvasHeight;
+    p.z = Math.random() * 1500 + 500;
+    return p;
+}
+
+
+/**
+ * Particle
+ */
+function Particle(x, y, z) {
+    this.x = x || 0;
+    this.y = y || 0;
+    this.z = z || 0;
+    this.pastZ = 0;
+}
+
+
+
+
+    </script>
+
 </html>
