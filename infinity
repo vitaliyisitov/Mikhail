@@ -1,0 +1,792 @@
+<!DOCTYPE html><html lang="en">
+	<head>
+		<meta charset="UTF-8">
+	  	<meta name="apple-mobile-web-app-title" content="CodePen">
+	  	<script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
+		<title>INFINITY</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+		<style>
+
+			:root {
+			--card-height: 300px;
+			--card-width: calc(var(--card-height) / 1.5);
+			}
+			* {
+			box-sizing: border-box;
+			}
+			.game {
+			width: 100vw;
+			height: 100vh;
+			margin: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: #000000;
+			}
+			.card {
+			width: var(--card-width);
+			height: var(--card-height);
+			position: relative;
+			display: flex;
+			justify-content: center;
+			align-items: flex-end;
+			padding: 0 36px;
+			perspective: 2500px;
+			margin: 0 50px;
+			z-index: 4;
+			}
+
+			.cover-image {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			}
+
+			.wrapper {
+			transition: all 0.5s;
+			position: absolute;
+			width: 100%;
+			z-index: -1;
+			}
+
+			.card:hover .wrapper {
+			transform: perspective(900px) translateY(-5%) rotateX(25deg) translateZ(0);
+			box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
+			-webkit-box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
+			-moz-box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
+			}
+
+			.wrapper::before,
+			.wrapper::after {
+			content: "";
+			opacity: 0;
+			width: 100%;
+			height: 80px;
+			transition: all 0.5s;
+			position: absolute;
+			left: 0;
+			}
+			.wrapper::before {
+			top: 0;
+			height: 100%;
+			background-image: linear-gradient(
+				to top,
+				transparent 46%,
+				rgba(12, 13, 19, 0.5) 68%,
+				rgba(12, 13, 19) 97%
+			);
+			}
+			.wrapper::after {
+			bottom: 0;
+			opacity: 1;
+			background-image: linear-gradient(
+				to bottom,
+				transparent 46%,
+				rgba(12, 13, 19, 0.5) 68%,
+				rgba(12, 13, 19) 97%
+			);
+			}
+
+			.card:hover .wrapper::before,
+			.wrapper::after {
+			opacity: 1;
+			}
+
+			.card:hover .wrapper::after {
+			height: 120px;
+			}
+			.title {
+			width: 100%;
+			transition: transform 0.5s;
+			}
+			.card:hover .title {
+			transform: translate3d(0%, -50px, 100px);
+			}
+
+			.character {
+			width: 100%;
+			opacity: 0;
+			transition: all 0.5s;
+			position: absolute;
+			z-index: -1;
+			}
+
+			.card:hover .character {
+			opacity: 1;
+			transform: translate3d(0%, -30%, 100px);
+			}
+
+
+			@keyframes move-twink-back {
+				from {background-position:0 0;}
+				to {background-position:-10000px 5000px;}
+			}
+			@-webkit-keyframes move-twink-back {
+				from {background-position:0 0;}
+				to {background-position:-10000px 5000px;}
+			}
+			@-moz-keyframes move-twink-back {
+				from {background-position:0 0;}
+				to {background-position:-10000px 5000px;}
+			}
+			@-ms-keyframes move-twink-back {
+				from {background-position:0 0;}
+				to {background-position:-10000px 5000px;}
+			}
+
+			@keyframes move-clouds-back {
+				from {background-position:0 0;}
+				to {background-position:10000px 0;}
+			}
+			@-webkit-keyframes move-clouds-back {
+				from {background-position:0 0;}
+				to {background-position:10000px 0;}
+			}
+			@-moz-keyframes move-clouds-back {
+				from {background-position:0 0;}
+				to {background-position:10000px 0;}
+			}
+			@-ms-keyframes move-clouds-back {
+				from {background-position: 0;}
+				to {background-position:10000px 0;}
+			}
+
+			.stars, .twinkling, .clouds {
+			position:absolute;
+			top:0;
+			left:0;
+			right:0;
+			bottom:0;
+			width:100%;
+			height:100%;
+			display:block;
+			}
+
+			.stars {
+			background:#000 url(http://www.script-tutorials.com/demos/360/images/stars.png) repeat top center;
+			z-index:0;
+			}
+
+			.twinkling{
+			background:transparent url(http://www.script-tutorials.com/demos/360/images/twinkling.png) repeat top center;
+			z-index:1;
+
+			-moz-animation:move-twink-back 200s linear infinite;
+			-ms-animation:move-twink-back 200s linear infinite;
+			-o-animation:move-twink-back 200s linear infinite;
+			-webkit-animation:move-twink-back 200s linear infinite;
+			animation:move-twink-back 200s linear infinite;
+			}
+
+			.clouds{
+				background:transparent url(http://www.script-tutorials.com/demos/360/images/clouds3.png) repeat top center;
+				z-index:3;
+
+			-moz-animation:move-clouds-back 200s linear infinite;
+			-ms-animation:move-clouds-back 200s linear infinite;
+			-o-animation:move-clouds-back 200s linear infinite;
+			-webkit-animation:move-clouds-back 200s linear infinite;
+			animation:move-clouds-back 200s linear infinite;
+			}
+
+
+			body {
+				line-height: 1.6;
+				color: #fff;
+				background: #000;
+				font-size: 18px;
+				font-weight: 400;
+				font-family: "-apple-system", "BlinkMacSystemFont", "Roboto", "Helvetica Neue", sans-serif !important;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+			}
+			body.stop {
+				overflow: hidden;
+			}
+			
+			#page {
+				position: relative;
+				transition: 1s all ease-in-out;
+			}
+			#page.menuopen {
+				opacity: 0.6;
+				filter: blur(20px);
+				transform: scale(1.2);
+			}
+			
+			section {
+				display: flex;
+				min-height: 100vh;
+				padding: 50px;
+				justify-content: center;
+				align-items: center;
+				background: #222;
+				color: #fff;
+				position: relative;
+			}
+			section:after {
+				content: "";
+				position: absolute;
+				left: 0;
+				top: 0;
+				background: #000;
+				opacity: 0.5;
+				height: 100%;
+				width: 100%;
+			}
+			section h1 {
+				font-size: 120px;
+				margin: 0;
+				z-index: 2;
+				position: relative;
+			}
+			
+			header {
+				z-index: 99999;
+				position: relative;
+			}
+			header #logo {
+				position: fixed;
+				top: 30px;
+				left: 0;
+				right: 0;
+				width: 100px;
+				height: auto;
+				margin: 0 auto;
+				opacity: 1;
+				transition: 0.3s all cubic-bezier(0.075, 0.82, 0.165, 1) 0.6s;
+			}
+			header nav {
+				display: flex;
+				height: 100px;
+				justify-content: center;
+				align-items: center;
+				padding: 0 20px;
+				position: fixed;
+				left: 0;
+				right: 0;
+				width: 500px;
+				margin: 0 auto;
+				top: 120px;
+				background-color: rgba(255, 255, 255, 0.05);
+				border-radius: 200px;
+				z-index: 9;
+				-webkit-backdrop-filter: blur(5px);
+						backdrop-filter: blur(5px);
+				border: 1px solid rgba(255, 255, 255, 0.06);
+				transition: 1s all cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+			}
+			header nav a {
+				color: #fff;
+				text-decoration: none;
+				font-weight: 700;
+				display: block;
+				padding: 10px 20px;
+				line-height: 1;
+				font-size: 15px;
+				letter-spacing: 2px;
+				text-transform: lowercase;
+				transition: 0.3s all cubic-bezier(0.075, 0.82, 0.165, 1) 0.6s;
+			}
+			header nav button {
+				-webkit-appearance: none;
+				background: rgba(0, 0, 0, 0.3);
+				-webkit-backdrop-filter: blur(5px);
+						backdrop-filter: blur(5px);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				position: absolute;
+				z-index: 99;
+				left: 0;
+				margin: auto;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				width: 60px;
+				height: 60px;
+				border-radius: 100%;
+				outline: 0;
+				border: 0;
+				cursor: pointer;
+				transition: 0.3s all cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+				transform: scale(0);
+			}
+			header nav button span {
+				width: 40%;
+				background: #fff;
+				height: 2px;
+				display: block;
+				margin: 5px auto;
+				transform: scalex(0);
+				transition: 0.6s transform cubic-bezier(0.075, 0.82, 0.165, 1) 0s, 0.3s margin ease-in 0s;
+			}
+			header nav button:hover {
+				border-color: rgba(255, 255, 255, 0.5);
+			}
+			header nav button:hover span {
+				margin: 10px auto;
+			}
+			
+			header.sticky #logo {
+				top: 0;
+				transform: scale(0.8);
+				opacity: 0;
+				transition-delay: 0.5s;
+			}
+			header.sticky nav {
+				top: 20px;
+				padding: 0;
+				width: 90px;
+				height: 90px;
+				transition-delay: 0.5s;
+			}
+			header.sticky nav button {
+				transform: scale(1);
+				transition-delay: 0.6s;
+			}
+			header.sticky nav button span {
+				transform: scalex(1);
+				transition: 0.6s transform cubic-bezier(0.075, 0.82, 0.165, 1) 0.8s, 0.3s margin ease-in 0s;
+			}
+			header.sticky nav a {
+				padding: 0;
+				opacity: 0;
+				letter-spacing: 0px;
+				transform: scale(0.3);
+				transition-delay: 0.2s;
+			}
+			
+			#fixedlink {
+				position: fixed;
+				bottom: 0;
+				z-index: 9999;
+				right: 0;
+				left: 0;
+				text-align: center;
+				text-decoration: none;
+				color: #fff;
+				font-size: 13px;
+				font-weight: 700;
+				letter-spacing: 1px;
+				padding: 20px;
+			}
+			:root{
+			--bg-clr: rgb(255, 255, 255);
+			--card-clr: #46444200;
+			--text-clr: #B8B0B2;
+			--partition-clr: #ffffff;
+			}
+
+			*, *::before, *::after{
+			padding: 0;
+			margin: 0;
+			box-sizing: border-box;
+			}
+
+			/* body{
+			font-family: 'Nunito', sans-serif;
+			font-weight: 400;
+			background: var(--bg-clr);
+			color: var(--text-clr);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			} */
+
+			.container{
+			margin: 6em auto;
+			width: 60%;
+			background: var(--card-clr);
+			padding: 5em 2em;
+			box-shadow: 0px 0px 10px 10px #ffffff82;
+			border-radius: 10px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			z-index: 4;
+			}
+
+			.basic, .pro{
+			padding: 1em 4em;
+			}
+
+			.basic{
+			border-right: 1px solid var(--partition-clr);
+			}
+
+			h2{
+			font-size: 2.25rem;
+			}
+
+			h4{
+			font-size: 1.5rem;
+			margin-top: 1em;
+			}
+
+			h6{
+			font-size: 1rem;
+			}
+
+			ul{
+			font-size: 1.125rem;
+			margin-top: 2em;
+			margin-left: 1em;
+			line-height: 2rem;
+			}
+
+			.basic-btn, .pro-btn{
+			width: 100%;
+			border: none;
+			padding: 0.8em 1.5em;
+			margin: 2em 0 0 0;
+			background: var(--bg-clr);
+			color: var(--text-clr);
+			font-size: 1.125rem;
+			border-radius: 5px;
+			cursor: pointer;
+			z-index: 4;
+			}
+
+			.basic-btn, .pro-btn{
+			background: transparent;
+			color: var(--bg-clr);
+			border: 1px solid var(--bg-clr);
+			}
+
+			.me {
+			display: block;
+			margin: 2em auto;
+			margin-bottom: 3em;
+			width: 150px;
+			height: 150px;
+			border-radius: 50%;
+			position: relative;
+			z-index: 2;
+			}
+
+			.social {
+			text-align: center;
+			font-size: 2.5em;
+			color: #555;
+			overflow: hidden;
+
+			a {
+				color: inherit;
+				text-decoration: none;
+			}
+			
+			i {
+				margin: .3em;
+				cursor: pointer;
+				transition: color 300ms ease, margin-top 300ms ease;
+				transform: translateZ(0);
+				
+				i:hover {
+				margin-top: -1px;
+				}
+				
+				&#twitter:hover {
+				color: #77DDF6;
+				}
+
+				&#github:hover {
+				color: black;
+				}
+
+				&#linkedin:hover {
+				color: #0177B5;
+				}
+
+				&#code:hover {
+				color: #29A329;
+				}
+
+				&#stack:hover {
+				color: #ED780E;
+				}
+
+				&#plus:hover {
+				color: #D43402;
+				}
+
+				&#mail:hover {
+				color: #F7B401;
+				}
+			}
+			}
+		</style>
+  
+		<script>
+			window.console = window.console || function(t) {};
+		</script>
+  	</head>
+  
+	<body translate="no">
+		<header id="myHeader" class="">
+			<img id="logo" src="foror (фон удален).png" viewBox="0 0 714.6 401.1" />
+			<nav>
+				<a href="#vision">Главная</a>
+				<a href="#knowledge">Игры</a>
+				<a href="#space">Цены</a>
+				<a href="#future">Контакты</a>
+				<button id="openmenu">
+					<span></span>
+					<span></span>
+				</button>
+			</nav>
+		</header>
+		<div id="page" class="">
+			<section id="vision" style="background-image:url(https://assets.codepen.io/214624/vision.jpg)">
+				<h1>INFINITY</h1>
+				<div class="stars"></div>
+				<div class="twinkling"></div>
+				<div class="clouds"></div>
+			</section>
+			<!-- <section id="knowledge" style="background-image:url(https://assets.codepen.io/214624/knowledge.jpg)">
+				<h1>Knowledge.</h1>
+			</section> -->
+			<section id="knowledge">
+				<div class="stars"></div>
+				<div class="twinkling"></div>
+				<div class="game">
+					<a href="https://www.mythrillfiction.com/the-dark-rider" alt="Mythrill" target="_blank">
+						<div class="card">
+						<div class="wrapper">
+							<img src="https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg" class="cover-image" />
+						</div>
+						<img src="https://ggayane.github.io/css-experiments/cards/dark_rider-title.png" class="title" />
+						<img src="https://ggayane.github.io/css-experiments/cards/dark_rider-character.webp" class="character" />
+						</div>
+					</a>
+					
+					<a href="https://www.mythrillfiction.com/force-mage" alt="Mythrill" target="_blank">
+						<div class="card">
+						<div class="wrapper">
+							<img src="https://ggayane.github.io/css-experiments/cards/force_mage-cover.jpg" class="cover-image" />
+						</div>
+						<img src="https://ggayane.github.io/css-experiments/cards/force_mage-title.png" class="title" />
+						<img src="https://ggayane.github.io/css-experiments/cards/force_mage-character.webp" class="character" />
+						</div>
+					</a>
+
+					<a href="https://www.mythrillfiction.com/force-mage" alt="Mythrill" target="_blank">
+						<div class="card">
+						<div class="wrapper">
+							<img src="https://ggayane.github.io/css-experiments/cards/force_mage-cover.jpg" class="cover-image" />
+						</div>
+						<img src="https://ggayane.github.io/css-experiments/cards/force_mage-title.png" class="title" />
+						<img src="https://ggayane.github.io/css-experiments/cards/force_mage-character.webp" class="character" />
+						</div>
+					</a>
+
+					<a href="https://www.mythrillfiction.com/the-dark-rider" alt="Mythrill" target="_blank">
+						<div class="card">
+						<div class="wrapper">
+							<img src="https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg" class="cover-image" />
+						</div>
+						<img src="https://ggayane.github.io/css-experiments/cards/dark_rider-title.png" class="title" />
+						<img src="https://ggayane.github.io/css-experiments/cards/dark_rider-character.webp" class="character" />
+						</div>
+					</a>
+				</div>
+			</section>
+			<section id="space">
+				<div class="stars"></div>
+				<div class="twinkling"></div>
+				<div class="container">
+					<div class="basic">
+					  <h2>Basic</h2>
+					  <h4>Free</h4>
+					  <h6>3,000 monthly visitors</h6>
+					  <ul class="basic-ul">
+						<li class="basic-li">Limited Reports</li>
+						<li class="basic-li">Unlimited Projects</li>
+						<li class="basic-li">Data storage for 1 year</li>
+					  </ul>
+					  <button class="basic-btn">Start now</button>
+					</div>
+					<div class="pro">
+					  <h2>Pro</h2>
+					  <h4>$19 / month</h4>
+					  <h6>10,000 monthly visitors</h6>
+					  <ul class="pro-ul">
+						<li class="pro-li">Unlimited Reports</li>
+						<li class="pro-li">15-day free trial</li>
+						<li class="pro-li">Data storage for 3 years</li>
+					  </ul>
+					  <button class="pro-btn">Try it</button>
+					</div>
+				  </div>
+			</section>
+			<section id="future">
+				<div class="stars"></div>
+				<div class="twinkling"></div>
+				<img class="me" src="http://gravatar.com/avatar/25b1fc64ba12614875c1e467d7e4c86e?s=512" alt="" />
+				<div class="social">
+				<a href="https://twitter.com/bphillips201"><i id="twitter" class="icon-twitter"></i></a>
+				<i id="github" class="icon-github"></i>
+				<i id="stack" class="icon-stackexchange"></i>
+				<i id="linkedin" class="icon-linkedin-sign"></i>
+				<i id="code" class="icon-code"></i>
+				<i id="plus" class="icon-google-plus-sign"></i>
+				<i id="mail" class="icon-envelope"></i> 
+				</div>
+			</section>
+		</div>
+		<a id="fixedlink" target="_blank" rel="nofollow noopener" href="">ACCEPT YOUR INFINITY POWER | ACTIVATE YOUR INFINITY MODE</a>
+		
+		<script id="rendered-js">
+			document.addEventListener('DOMContentLoaded', function () {
+			var header = document.getElementById('myHeader');
+			var page = document.getElementById('page');
+			var openMenuButton = document.getElementById('openmenu');
+		
+			window.addEventListener('scroll', function () {
+			page.classList.remove('menuopen');
+			if (window.scrollY >= 100) {
+				header.classList.add('sticky');
+			} else {
+				header.classList.remove('sticky');
+			}
+			});
+		
+			// Event listener to remove the sticky class when the button is clicked
+			openMenuButton.addEventListener('click', function () {
+			header.classList.remove('sticky');
+			page.classList.add('menuopen');
+			});
+		
+			var links = document.querySelectorAll('a[href^="#"]');
+		
+			links.forEach(function (link) {
+			link.addEventListener('click', function (event) {
+				// Prevent the default action
+				event.preventDefault();
+		
+				// Get the target element
+				var targetId = this.getAttribute('href');
+				var targetElement = document.querySelector(targetId);
+		
+				// Smooth scroll to target
+				if (targetElement) {
+				targetElement.scrollIntoView({
+					behavior: 'smooth' });
+		
+				}
+			});
+			});
+		});
+		//# sourceURL=pen.js
+
+		$(document).ready(function() {
+		$('i').hide();
+		})
+
+		$(window).load(function() {
+		$('i').show();
+
+		var twitterPos = $('#twitter').position();
+		var githubPos = $('#github').position();
+		var stackPos = $('#stack').position();
+		var linkedinPos = $('#linkedin').position();
+		var codePos = $('#code').position();
+		var plusPos = $('#plus').position();
+		var mailPos = $('#mail').position();
+		var imgPos = $('.me').position();
+		
+		$('i').css({
+			position: 'absolute',
+			zIndex: '1',
+			top: imgPos.top + 100,
+			left: '47%'
+		});
+		
+		setTimeout(function() {
+			$('#twitter').animate({
+			top: twitterPos.top + 10,
+			left: twitterPos.left - 10
+			}, 500);
+		}, 250);
+		
+		setTimeout(function() {
+			$('#twitter').animate({
+			top: twitterPos.top,
+			left: twitterPos.left
+			}, 250);
+			
+			$('#github').animate({
+			top: githubPos.top + 10,
+			left: githubPos.left - 6
+			}, 500);
+		}, 500);
+		
+		setTimeout(function() {
+			$('#github').animate({
+			top: githubPos.top,
+			left: githubPos.left
+			}, 250);
+			
+			$('#stack').animate({
+			top: stackPos.top + 10,
+			left: stackPos.left - 3
+			}, 500);
+		}, 750);
+		
+		setTimeout(function() {
+			$('#stack').animate({
+			top: stackPos.top,
+			left: stackPos.left
+			}, 250);
+			
+			$('#linkedin').animate({
+			top: linkedinPos.top + 10,
+			left: linkedinPos.left
+			}, 500);
+		}, 1000);
+		
+		setTimeout(function() {
+			$('#linkedin').animate({
+			top: linkedinPos.top,
+			left: linkedinPos.left
+			}, 250);
+			
+			$('#code').animate({
+			top: codePos.top + 10,
+			left: codePos.left + 3
+			}, 500);
+		}, 1250);
+		
+		setTimeout(function() {
+			$('#code').animate({
+			top: codePos.top,
+			left: codePos.left
+			}, 250);
+			
+			$('#plus').animate({
+			top: plusPos.top + 10,
+			left: plusPos.left + 6
+			}, 500);
+		}, 1500);
+		
+		setTimeout(function() {
+			$('#plus').animate({
+			top: plusPos.top,
+			left: plusPos.left
+			}, 250);
+			
+			$('#mail').animate({
+			top: mailPos.top + 10,
+			left: mailPos.left + 10
+			}, 500);
+		}, 1750);
+		
+		setTimeout(function() {
+			$('#mail').animate({
+			top: mailPos.top,
+			left: mailPos.left
+			}, 250);
+		}, 2000);
+		
+		})
+		</script>
+	</body>
+</html>
