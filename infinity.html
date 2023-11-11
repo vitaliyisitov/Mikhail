@@ -1,792 +1,1024 @@
-<!DOCTYPE html><html lang="en">
-	<head>
-		<meta charset="UTF-8">
-	  	<meta name="apple-mobile-web-app-title" content="CodePen">
-	  	<script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
-		<title>INFINITY</title>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-		<style>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="apple-mobile-web-app-title" content="CodePen" />
+    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
+    <title>INFINITY</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css"
+    />
+    <style>
+      :root {
+        --card-height: 300px;
+        --card-width: calc(var(--card-height) / 1.5);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      .game {
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #000000;
+      }
+      .card {
+        width: var(--card-width);
+        height: var(--card-height);
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        padding: 0 36px;
+        perspective: 2500px;
+        margin: 0 50px;
+        z-index: 4;
+      }
 
-			:root {
-			--card-height: 300px;
-			--card-width: calc(var(--card-height) / 1.5);
-			}
-			* {
-			box-sizing: border-box;
-			}
-			.game {
-			width: 100vw;
-			height: 100vh;
-			margin: 0;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			background: #000000;
-			}
-			.card {
-			width: var(--card-width);
-			height: var(--card-height);
-			position: relative;
-			display: flex;
-			justify-content: center;
-			align-items: flex-end;
-			padding: 0 36px;
-			perspective: 2500px;
-			margin: 0 50px;
-			z-index: 4;
-			}
+      .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
 
-			.cover-image {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			}
+      .wrapper {
+        transition: all 0.5s;
+        position: absolute;
+        width: 100%;
+        z-index: -1;
+      }
 
-			.wrapper {
-			transition: all 0.5s;
-			position: absolute;
-			width: 100%;
-			z-index: -1;
-			}
+      .card:hover .wrapper {
+        transform: perspective(900px) translateY(-5%) rotateX(25deg)
+          translateZ(0);
+        box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
+        -webkit-box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
+      }
 
-			.card:hover .wrapper {
-			transform: perspective(900px) translateY(-5%) rotateX(25deg) translateZ(0);
-			box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
-			-webkit-box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
-			-moz-box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
-			}
+      .wrapper::before,
+      .wrapper::after {
+        content: "";
+        opacity: 0;
+        width: 100%;
+        height: 80px;
+        transition: all 0.5s;
+        position: absolute;
+        left: 0;
+      }
+      .wrapper::before {
+        top: 0;
+        height: 100%;
+        background-image: linear-gradient(
+          to top,
+          transparent 46%,
+          rgba(12, 13, 19, 0.5) 68%,
+          rgba(12, 13, 19) 97%
+        );
+      }
+      .wrapper::after {
+        bottom: 0;
+        opacity: 1;
+        background-image: linear-gradient(
+          to bottom,
+          transparent 46%,
+          rgba(12, 13, 19, 0.5) 68%,
+          rgba(12, 13, 19) 97%
+        );
+      }
 
-			.wrapper::before,
-			.wrapper::after {
-			content: "";
-			opacity: 0;
-			width: 100%;
-			height: 80px;
-			transition: all 0.5s;
-			position: absolute;
-			left: 0;
-			}
-			.wrapper::before {
-			top: 0;
-			height: 100%;
-			background-image: linear-gradient(
-				to top,
-				transparent 46%,
-				rgba(12, 13, 19, 0.5) 68%,
-				rgba(12, 13, 19) 97%
-			);
-			}
-			.wrapper::after {
-			bottom: 0;
-			opacity: 1;
-			background-image: linear-gradient(
-				to bottom,
-				transparent 46%,
-				rgba(12, 13, 19, 0.5) 68%,
-				rgba(12, 13, 19) 97%
-			);
-			}
+      .card:hover .wrapper::before,
+      .wrapper::after {
+        opacity: 1;
+      }
 
-			.card:hover .wrapper::before,
-			.wrapper::after {
-			opacity: 1;
-			}
+      .card:hover .wrapper::after {
+        height: 120px;
+      }
+      .title {
+        width: 100%;
+        transition: transform 0.5s;
+      }
+      .card:hover .title {
+        transform: translate3d(0%, -50px, 100px);
+      }
 
-			.card:hover .wrapper::after {
-			height: 120px;
-			}
-			.title {
-			width: 100%;
-			transition: transform 0.5s;
-			}
-			.card:hover .title {
-			transform: translate3d(0%, -50px, 100px);
-			}
+      .character {
+        width: 100%;
+        opacity: 0;
+        transition: all 0.5s;
+        position: absolute;
+        z-index: -1;
+      }
 
-			.character {
-			width: 100%;
-			opacity: 0;
-			transition: all 0.5s;
-			position: absolute;
-			z-index: -1;
-			}
+      .card:hover .character {
+        opacity: 1;
+        transform: translate3d(0%, -30%, 100px);
+      }
 
-			.card:hover .character {
-			opacity: 1;
-			transform: translate3d(0%, -30%, 100px);
-			}
+      @keyframes move-twink-back {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: -10000px 5000px;
+        }
+      }
+      @-webkit-keyframes move-twink-back {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: -10000px 5000px;
+        }
+      }
+      @-moz-keyframes move-twink-back {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: -10000px 5000px;
+        }
+      }
+      @-ms-keyframes move-twink-back {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: -10000px 5000px;
+        }
+      }
 
+      @keyframes move-clouds-back {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: 10000px 0;
+        }
+      }
+      @-webkit-keyframes move-clouds-back {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: 10000px 0;
+        }
+      }
+      @-moz-keyframes move-clouds-back {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: 10000px 0;
+        }
+      }
+      @-ms-keyframes move-clouds-back {
+        from {
+          background-position: 0;
+        }
+        to {
+          background-position: 10000px 0;
+        }
+      }
 
-			@keyframes move-twink-back {
-				from {background-position:0 0;}
-				to {background-position:-10000px 5000px;}
-			}
-			@-webkit-keyframes move-twink-back {
-				from {background-position:0 0;}
-				to {background-position:-10000px 5000px;}
-			}
-			@-moz-keyframes move-twink-back {
-				from {background-position:0 0;}
-				to {background-position:-10000px 5000px;}
-			}
-			@-ms-keyframes move-twink-back {
-				from {background-position:0 0;}
-				to {background-position:-10000px 5000px;}
-			}
+      .stars,
+      .twinkling,
+      .clouds {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
 
-			@keyframes move-clouds-back {
-				from {background-position:0 0;}
-				to {background-position:10000px 0;}
-			}
-			@-webkit-keyframes move-clouds-back {
-				from {background-position:0 0;}
-				to {background-position:10000px 0;}
-			}
-			@-moz-keyframes move-clouds-back {
-				from {background-position:0 0;}
-				to {background-position:10000px 0;}
-			}
-			@-ms-keyframes move-clouds-back {
-				from {background-position: 0;}
-				to {background-position:10000px 0;}
-			}
+      .stars {
+        background: #000
+          url(http://www.script-tutorials.com/demos/360/images/stars.png) repeat
+          top center;
+        z-index: 0;
+      }
 
-			.stars, .twinkling, .clouds {
-			position:absolute;
-			top:0;
-			left:0;
-			right:0;
-			bottom:0;
-			width:100%;
-			height:100%;
-			display:block;
-			}
+      .twinkling {
+        background: transparent
+          url(http://www.script-tutorials.com/demos/360/images/twinkling.png)
+          repeat top center;
+        z-index: 1;
 
-			.stars {
-			background:#000 url(http://www.script-tutorials.com/demos/360/images/stars.png) repeat top center;
-			z-index:0;
-			}
+        -moz-animation: move-twink-back 200s linear infinite;
+        -ms-animation: move-twink-back 200s linear infinite;
+        -o-animation: move-twink-back 200s linear infinite;
+        -webkit-animation: move-twink-back 200s linear infinite;
+        animation: move-twink-back 200s linear infinite;
+      }
 
-			.twinkling{
-			background:transparent url(http://www.script-tutorials.com/demos/360/images/twinkling.png) repeat top center;
-			z-index:1;
+      .clouds {
+        background: transparent
+          url(http://www.script-tutorials.com/demos/360/images/clouds3.png)
+          repeat top center;
+        z-index: 3;
 
-			-moz-animation:move-twink-back 200s linear infinite;
-			-ms-animation:move-twink-back 200s linear infinite;
-			-o-animation:move-twink-back 200s linear infinite;
-			-webkit-animation:move-twink-back 200s linear infinite;
-			animation:move-twink-back 200s linear infinite;
-			}
+        -moz-animation: move-clouds-back 200s linear infinite;
+        -ms-animation: move-clouds-back 200s linear infinite;
+        -o-animation: move-clouds-back 200s linear infinite;
+        -webkit-animation: move-clouds-back 200s linear infinite;
+        animation: move-clouds-back 200s linear infinite;
+      }
 
-			.clouds{
-				background:transparent url(http://www.script-tutorials.com/demos/360/images/clouds3.png) repeat top center;
-				z-index:3;
+      body {
+        line-height: 1.6;
+        color: #fff;
+        background: #000;
+        font-size: 18px;
+        font-weight: 400;
+        font-family: "-apple-system", "BlinkMacSystemFont", "Roboto",
+          "Helvetica Neue", sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      body.stop {
+        overflow: hidden;
+      }
 
-			-moz-animation:move-clouds-back 200s linear infinite;
-			-ms-animation:move-clouds-back 200s linear infinite;
-			-o-animation:move-clouds-back 200s linear infinite;
-			-webkit-animation:move-clouds-back 200s linear infinite;
-			animation:move-clouds-back 200s linear infinite;
-			}
+      #page {
+        position: relative;
+        transition: 1s all ease-in-out;
+      }
+      #page.menuopen {
+        opacity: 0.6;
+        filter: blur(20px);
+        transform: scale(1.2);
+      }
 
+      section {
+        display: flex;
+        min-height: 100vh;
+        padding: 50px;
+        justify-content: center;
+        align-items: center;
+        background: #222;
+        color: #fff;
+        position: relative;
+      }
+      section:after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: #000;
+        opacity: 0.5;
+        height: 100%;
+        width: 100%;
+      }
+      section h1 {
+        font-size: 120px;
+        margin: 0;
+        z-index: 2;
+        position: relative;
+      }
 
-			body {
-				line-height: 1.6;
-				color: #fff;
-				background: #000;
-				font-size: 18px;
-				font-weight: 400;
-				font-family: "-apple-system", "BlinkMacSystemFont", "Roboto", "Helvetica Neue", sans-serif !important;
-				-webkit-font-smoothing: antialiased;
-				-moz-osx-font-smoothing: grayscale;
-			}
-			body.stop {
-				overflow: hidden;
-			}
-			
-			#page {
-				position: relative;
-				transition: 1s all ease-in-out;
-			}
-			#page.menuopen {
-				opacity: 0.6;
-				filter: blur(20px);
-				transform: scale(1.2);
-			}
-			
-			section {
-				display: flex;
-				min-height: 100vh;
-				padding: 50px;
-				justify-content: center;
-				align-items: center;
-				background: #222;
-				color: #fff;
-				position: relative;
-			}
-			section:after {
-				content: "";
-				position: absolute;
-				left: 0;
-				top: 0;
-				background: #000;
-				opacity: 0.5;
-				height: 100%;
-				width: 100%;
-			}
-			section h1 {
-				font-size: 120px;
-				margin: 0;
-				z-index: 2;
-				position: relative;
-			}
-			
-			header {
-				z-index: 99999;
-				position: relative;
-			}
-			header #logo {
-				position: fixed;
-				top: 30px;
-				left: 0;
-				right: 0;
-				width: 100px;
-				height: auto;
-				margin: 0 auto;
-				opacity: 1;
-				transition: 0.3s all cubic-bezier(0.075, 0.82, 0.165, 1) 0.6s;
-			}
-			header nav {
-				display: flex;
-				height: 100px;
-				justify-content: center;
-				align-items: center;
-				padding: 0 20px;
-				position: fixed;
-				left: 0;
-				right: 0;
-				width: 500px;
-				margin: 0 auto;
-				top: 120px;
-				background-color: rgba(255, 255, 255, 0.05);
-				border-radius: 200px;
-				z-index: 9;
-				-webkit-backdrop-filter: blur(5px);
-						backdrop-filter: blur(5px);
-				border: 1px solid rgba(255, 255, 255, 0.06);
-				transition: 1s all cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
-			}
-			header nav a {
-				color: #fff;
-				text-decoration: none;
-				font-weight: 700;
-				display: block;
-				padding: 10px 20px;
-				line-height: 1;
-				font-size: 15px;
-				letter-spacing: 2px;
-				text-transform: lowercase;
-				transition: 0.3s all cubic-bezier(0.075, 0.82, 0.165, 1) 0.6s;
-			}
-			header nav button {
-				-webkit-appearance: none;
-				background: rgba(0, 0, 0, 0.3);
-				-webkit-backdrop-filter: blur(5px);
-						backdrop-filter: blur(5px);
-				border: 1px solid rgba(255, 255, 255, 0.1);
-				position: absolute;
-				z-index: 99;
-				left: 0;
-				margin: auto;
-				right: 0;
-				top: 0;
-				bottom: 0;
-				width: 60px;
-				height: 60px;
-				border-radius: 100%;
-				outline: 0;
-				border: 0;
-				cursor: pointer;
-				transition: 0.3s all cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
-				transform: scale(0);
-			}
-			header nav button span {
-				width: 40%;
-				background: #fff;
-				height: 2px;
-				display: block;
-				margin: 5px auto;
-				transform: scalex(0);
-				transition: 0.6s transform cubic-bezier(0.075, 0.82, 0.165, 1) 0s, 0.3s margin ease-in 0s;
-			}
-			header nav button:hover {
-				border-color: rgba(255, 255, 255, 0.5);
-			}
-			header nav button:hover span {
-				margin: 10px auto;
-			}
-			
-			header.sticky #logo {
-				top: 0;
-				transform: scale(0.8);
-				opacity: 0;
-				transition-delay: 0.5s;
-			}
-			header.sticky nav {
-				top: 20px;
-				padding: 0;
-				width: 90px;
-				height: 90px;
-				transition-delay: 0.5s;
-			}
-			header.sticky nav button {
-				transform: scale(1);
-				transition-delay: 0.6s;
-			}
-			header.sticky nav button span {
-				transform: scalex(1);
-				transition: 0.6s transform cubic-bezier(0.075, 0.82, 0.165, 1) 0.8s, 0.3s margin ease-in 0s;
-			}
-			header.sticky nav a {
-				padding: 0;
-				opacity: 0;
-				letter-spacing: 0px;
-				transform: scale(0.3);
-				transition-delay: 0.2s;
-			}
-			
-			#fixedlink {
-				position: fixed;
-				bottom: 0;
-				z-index: 9999;
-				right: 0;
-				left: 0;
-				text-align: center;
-				text-decoration: none;
-				color: #fff;
-				font-size: 13px;
-				font-weight: 700;
-				letter-spacing: 1px;
-				padding: 20px;
-			}
-			:root{
-			--bg-clr: rgb(255, 255, 255);
-			--card-clr: #46444200;
-			--text-clr: #B8B0B2;
-			--partition-clr: #ffffff;
-			}
+      header {
+        z-index: 99999;
+        position: relative;
+      }
+      header #logo {
+        position: fixed;
+        top: 30px;
+        left: 0;
+        right: 0;
+        width: 100px;
+        height: auto;
+        margin: 0 auto;
+        opacity: 1;
+        transition: 0.3s all cubic-bezier(0.075, 0.82, 0.165, 1) 0.6s;
+      }
+      header nav {
+        display: flex;
+        height: 100px;
+        justify-content: center;
+        align-items: center;
+        padding: 0 20px;
+        position: fixed;
+        left: 0;
+        right: 0;
+        width: 500px;
+        margin: 0 auto;
+        top: 120px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 200px;
+        z-index: 9;
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        transition: 1s all cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+      }
+      header nav a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        display: block;
+        padding: 10px 20px;
+        line-height: 1;
+        font-size: 15px;
+        letter-spacing: 2px;
+        text-transform: lowercase;
+        transition: 0.3s all cubic-bezier(0.075, 0.82, 0.165, 1) 0.6s;
+      }
+      header nav button {
+        -webkit-appearance: none;
+        background: rgba(0, 0, 0, 0.3);
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: absolute;
+        z-index: 99;
+        left: 0;
+        margin: auto;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 60px;
+        height: 60px;
+        border-radius: 100%;
+        outline: 0;
+        border: 0;
+        cursor: pointer;
+        transition: 0.3s all cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s;
+        transform: scale(0);
+      }
+      header nav button span {
+        width: 40%;
+        background: #fff;
+        height: 2px;
+        display: block;
+        margin: 5px auto;
+        transform: scalex(0);
+        transition: 0.6s transform cubic-bezier(0.075, 0.82, 0.165, 1) 0s,
+          0.3s margin ease-in 0s;
+      }
+      header nav button:hover {
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+      header nav button:hover span {
+        margin: 10px auto;
+      }
 
-			*, *::before, *::after{
-			padding: 0;
-			margin: 0;
-			box-sizing: border-box;
-			}
+      header.sticky #logo {
+        top: 0;
+        transform: scale(0.8);
+        opacity: 0;
+        transition-delay: 0.5s;
+      }
+      header.sticky nav {
+        top: 20px;
+        padding: 0;
+        width: 90px;
+        height: 90px;
+        transition-delay: 0.5s;
+      }
+      header.sticky nav button {
+        transform: scale(1);
+        transition-delay: 0.6s;
+      }
+      header.sticky nav button span {
+        transform: scalex(1);
+        transition: 0.6s transform cubic-bezier(0.075, 0.82, 0.165, 1) 0.8s,
+          0.3s margin ease-in 0s;
+      }
+      header.sticky nav a {
+        padding: 0;
+        opacity: 0;
+        letter-spacing: 0px;
+        transform: scale(0.3);
+        transition-delay: 0.2s;
+      }
 
-			/* body{
-			font-family: 'Nunito', sans-serif;
-			font-weight: 400;
-			background: var(--bg-clr);
-			color: var(--text-clr);
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			} */
+      #fixedlink {
+        position: fixed;
+        bottom: 0;
+        z-index: 9999;
+        right: 0;
+        left: 0;
+        text-align: center;
+        text-decoration: none;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        padding: 20px;
+      }
+      :root {
+        --bg-clr: rgb(255, 255, 255);
+        --card-clr: #46444200;
+        --text-clr: #b8b0b2;
+        --partition-clr: #ffffff;
+      }
 
-			.container{
-			margin: 6em auto;
-			width: 60%;
-			background: var(--card-clr);
-			padding: 5em 2em;
-			box-shadow: 0px 0px 10px 10px #ffffff82;
-			border-radius: 10px;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			z-index: 4;
-			}
+      *,
+      *::before,
+      *::after {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
 
-			.basic, .pro{
-			padding: 1em 4em;
-			}
+      /* body{
+      	font-family: 'Nunito', sans-serif;
+      	font-weight: 400;
+      	background: var(--bg-clr);
+      	color: var(--text-clr);
+      	display: flex;
+      	justify-content: center;
+      	align-items: center;
+      	} */
 
-			.basic{
-			border-right: 1px solid var(--partition-clr);
-			}
+      .container {
+        margin: 6em auto;
+        width: 60%;
+        background: var(--card-clr);
+        padding: 5em 2em;
+        box-shadow: 0px 0px 10px 10px #ffffff82;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 4;
+      }
 
-			h2{
-			font-size: 2.25rem;
-			}
+      .basic,
+      .pro {
+        padding: 1em 4em;
+      }
 
-			h4{
-			font-size: 1.5rem;
-			margin-top: 1em;
-			}
+      .basic {
+        border-right: 1px solid var(--partition-clr);
+      }
 
-			h6{
-			font-size: 1rem;
-			}
+      h2 {
+        font-size: 2.25rem;
+      }
 
-			ul{
-			font-size: 1.125rem;
-			margin-top: 2em;
-			margin-left: 1em;
-			line-height: 2rem;
-			}
+      h4 {
+        font-size: 1.5rem;
+        margin-top: 1em;
+      }
 
-			.basic-btn, .pro-btn{
-			width: 100%;
-			border: none;
-			padding: 0.8em 1.5em;
-			margin: 2em 0 0 0;
-			background: var(--bg-clr);
-			color: var(--text-clr);
-			font-size: 1.125rem;
-			border-radius: 5px;
-			cursor: pointer;
-			z-index: 4;
-			}
+      h6 {
+        font-size: 1rem;
+      }
 
-			.basic-btn, .pro-btn{
-			background: transparent;
-			color: var(--bg-clr);
-			border: 1px solid var(--bg-clr);
-			}
+      ul {
+        font-size: 1.125rem;
+        margin-top: 2em;
+        margin-left: 1em;
+        line-height: 2rem;
+      }
 
-			.me {
-			display: block;
-			margin: 2em auto;
-			margin-bottom: 3em;
-			width: 150px;
-			height: 150px;
-			border-radius: 50%;
-			position: relative;
-			z-index: 2;
-			}
+      .basic-btn,
+      .pro-btn {
+        width: 100%;
+        border: none;
+        padding: 0.8em 1.5em;
+        margin: 2em 0 0 0;
+        background: var(--bg-clr);
+        color: var(--text-clr);
+        font-size: 1.125rem;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 4;
+      }
 
-			.social {
-			text-align: center;
-			font-size: 2.5em;
-			color: #555;
-			overflow: hidden;
+      .basic-btn,
+      .pro-btn {
+        background: transparent;
+        color: var(--bg-clr);
+        border: 1px solid var(--bg-clr);
+      }
 
-			a {
-				color: inherit;
-				text-decoration: none;
-			}
-			
-			i {
-				margin: .3em;
-				cursor: pointer;
-				transition: color 300ms ease, margin-top 300ms ease;
-				transform: translateZ(0);
-				
-				i:hover {
-				margin-top: -1px;
-				}
-				
-				&#twitter:hover {
-				color: #77DDF6;
-				}
+      .socials {
+        z-index: 4;
+        margin: 0 auto;
+      }
 
-				&#github:hover {
-				color: black;
-				}
+      .socials svg {
+        margin: 0 5px;
+        transition: all 0.5s ease-in-out;
+        transform: scale(1);
+      }
 
-				&#linkedin:hover {
-				color: #0177B5;
-				}
+      .socials svg:hover {
+        transform: scale(1.2);
+        filter: drop-shadow(0px 0px 5px rgba(255, 255, 255, 1));
+      }
+      a {
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: none;
+        transition: all 0.5s ease-in-out;
+      }
 
-				&#code:hover {
-				color: #29A329;
-				}
+      a:hover {
+        filter: drop-shadow(0px 0px 10px rgba(255, 255, 255, 0.9));
+      }
+      /* body {
+            padding: 0;
+            margin: 0;
+          } */
+      .box {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        font-family: Helvetica;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.13);
+        padding: 200px 0px;
+        border-radius: 10px;
+        z-index: 4;
+      }
+      .box h1 {
+        text-align: center;
+        margin: 30px 0;
+        font-size: 30px;
+      }
+      .box input {
+        display: block;
+        width: 300px;
+        margin: 40px auto;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.845);
+        color: #000000;
+        border: 0;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px 10px #ffffff82;
+      }
+      .box input:focus,
+      .box input:active,
+      .box button:focus,
+      .box button:active {
+        outline: none;
+      }
+      .box button {
+        background: #ffffff;
+        border: 0;
+        color: #000000;
+        padding: 10px;
+        font-size: 20px;
+        width: 330px;
+        margin: 20px auto;
+        display: block;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+      .box button:active {
+        background: #000000;
+        color: #fff;
+      }
+      .box p {
+        font-size: 14px;
+        text-align: center;
+      }
+      .box p span {
+        cursor: pointer;
+        color: #666;
+      }
+    </style>
 
-				&#stack:hover {
-				color: #ED780E;
-				}
+    <script>
+      window.console = window.console || function (t) {};
+    </script>
+  </head>
 
-				&#plus:hover {
-				color: #D43402;
-				}
+  <body translate="no">
+    <header id="myHeader" class="">
+      <img id="logo" src="foror (фон удален).png" viewBox="0 0 714.6 401.1" />
+      <nav>
+        <a href="#vision">Главная</a>
+        <a href="#knowledge">Игры</a>
+        <a href="#space">Цены</a>
+        <a href="#future">Регистрация</a>
+        <button id="openmenu">
+          <span></span>
+          <span></span>
+        </button>
+      </nav>
+    </header>
+    <div id="page" class="">
+      <section
+        id="vision"
+        style="
+          background-image: url(https://assets.codepen.io/214624/vision.jpg);
+        "
+      >
+        <div style="display: flex; flex-direction: column">
+          <h1>INFINITY</h1>
 
-				&#mail:hover {
-				color: #F7B401;
-				}
-			}
-			}
-		</style>
-  
-		<script>
-			window.console = window.console || function(t) {};
-		</script>
-  	</head>
-  
-	<body translate="no">
-		<header id="myHeader" class="">
-			<img id="logo" src="foror (фон удален).png" viewBox="0 0 714.6 401.1" />
-			<nav>
-				<a href="#vision">Главная</a>
-				<a href="#knowledge">Игры</a>
-				<a href="#space">Цены</a>
-				<a href="#future">Контакты</a>
-				<button id="openmenu">
-					<span></span>
-					<span></span>
-				</button>
-			</nav>
-		</header>
-		<div id="page" class="">
-			<section id="vision" style="background-image:url(https://assets.codepen.io/214624/vision.jpg)">
-				<h1>INFINITY</h1>
-				<div class="stars"></div>
-				<div class="twinkling"></div>
-				<div class="clouds"></div>
-			</section>
-			<!-- <section id="knowledge" style="background-image:url(https://assets.codepen.io/214624/knowledge.jpg)">
+          <div class="socials">
+            <a href="https://instagram.com/miroxleon" target="_blank">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8A1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5a5 5 0 0 1-5 5a5 5 0 0 1-5-5a5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3Z"
+                />
+              </svg>
+            </a>
+
+            <a href="https://twitter.com/miroxleon" target="_blank">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M22.46 6c-.77.35-1.6.58-2.46.69c.88-.53 1.56-1.37 1.88-2.38c-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29c0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15c0 1.49.75 2.81 1.91 3.56c-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07a4.28 4.28 0 0 0 4 2.98a8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21C16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56c.84-.6 1.56-1.36 2.14-2.23Z"
+                />
+              </svg>
+            </a>
+
+            <a href="https://miroleon.de/links" target="_blank">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  fill="currentColor"
+                  d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm-26.37 144h52.74C149 186.34 140 202.87 128 215.89c-12-13.02-21-29.55-26.37-47.89ZM98 152a145.72 145.72 0 0 1 0-48h60a145.72 145.72 0 0 1 0 48Zm-58-24a87.61 87.61 0 0 1 3.33-24h38.46a161.79 161.79 0 0 0 0 48H43.33A87.61 87.61 0 0 1 40 128Zm114.37-40h-52.74C107 69.66 116 53.13 128 40.11c12 13.02 21 29.55 26.37 47.89Zm19.84 16h38.46a88.15 88.15 0 0 1 0 48h-38.46a161.79 161.79 0 0 0 0-48Zm32.16-16h-35.43a142.39 142.39 0 0 0-20.26-45a88.37 88.37 0 0 1 55.69 45ZM105.32 43a142.39 142.39 0 0 0-20.26 45H49.63a88.37 88.37 0 0 1 55.69-45ZM49.63 168h35.43a142.39 142.39 0 0 0 20.26 45a88.37 88.37 0 0 1-55.69-45Zm101.05 45a142.39 142.39 0 0 0 20.26-45h35.43a88.37 88.37 0 0 1-55.69 45Z"
+                />
+              </svg>
+            </a>
+
+            <a href="https://youtu.be/Y5kJFvQtb-U" target="_blank">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill="currentColor"
+                  d="M11.603 9.833L9.357 8.785C9.161 8.694 9 8.796 9 9.013v1.974c0 .217.161.319.357.228l2.245-1.048c.197-.092.197-.242.001-.334zM10 .4C4.698.4.4 4.698.4 10s4.298 9.6 9.6 9.6s9.6-4.298 9.6-9.6S15.302.4 10 .4zm0 13.5c-4.914 0-5-.443-5-3.9s.086-3.9 5-3.9s5 .443 5 3.9s-.086 3.9-5 3.9z"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+        <div class="clouds"></div>
+      </section>
+      <!-- <section id="knowledge" style="background-image:url(https://assets.codepen.io/214624/knowledge.jpg)">
 				<h1>Knowledge.</h1>
 			</section> -->
-			<section id="knowledge">
-				<div class="stars"></div>
-				<div class="twinkling"></div>
-				<div class="game">
-					<a href="https://www.mythrillfiction.com/the-dark-rider" alt="Mythrill" target="_blank">
-						<div class="card">
-						<div class="wrapper">
-							<img src="https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg" class="cover-image" />
-						</div>
-						<img src="https://ggayane.github.io/css-experiments/cards/dark_rider-title.png" class="title" />
-						<img src="https://ggayane.github.io/css-experiments/cards/dark_rider-character.webp" class="character" />
-						</div>
-					</a>
-					
-					<a href="https://www.mythrillfiction.com/force-mage" alt="Mythrill" target="_blank">
-						<div class="card">
-						<div class="wrapper">
-							<img src="https://ggayane.github.io/css-experiments/cards/force_mage-cover.jpg" class="cover-image" />
-						</div>
-						<img src="https://ggayane.github.io/css-experiments/cards/force_mage-title.png" class="title" />
-						<img src="https://ggayane.github.io/css-experiments/cards/force_mage-character.webp" class="character" />
-						</div>
-					</a>
+      <section id="knowledge">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+        <div class="game">
+          <a
+            href="https://www.mythrillfiction.com/the-dark-rider"
+            alt="Mythrill"
+            target="_blank"
+          >
+            <div class="card">
+              <div class="wrapper">
+                <img
+                  src="https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg"
+                  class="cover-image"
+                />
+              </div>
+              <img
+                src="https://ggayane.github.io/css-experiments/cards/dark_rider-title.png"
+                class="title"
+              />
+              <img
+                src="https://ggayane.github.io/css-experiments/cards/dark_rider-character.webp"
+                class="character"
+              />
+            </div>
+          </a>
 
-					<a href="https://www.mythrillfiction.com/force-mage" alt="Mythrill" target="_blank">
-						<div class="card">
-						<div class="wrapper">
-							<img src="https://ggayane.github.io/css-experiments/cards/force_mage-cover.jpg" class="cover-image" />
-						</div>
-						<img src="https://ggayane.github.io/css-experiments/cards/force_mage-title.png" class="title" />
-						<img src="https://ggayane.github.io/css-experiments/cards/force_mage-character.webp" class="character" />
-						</div>
-					</a>
+          <a
+            href="https://www.mythrillfiction.com/force-mage"
+            alt="Mythrill"
+            target="_blank"
+          >
+            <div class="card">
+              <div class="wrapper">
+                <img
+                  src="https://ggayane.github.io/css-experiments/cards/force_mage-cover.jpg"
+                  class="cover-image"
+                />
+              </div>
+              <img
+                src="https://ggayane.github.io/css-experiments/cards/force_mage-title.png"
+                class="title"
+              />
+              <img
+                src="https://ggayane.github.io/css-experiments/cards/force_mage-character.webp"
+                class="character"
+              />
+            </div>
+          </a>
 
-					<a href="https://www.mythrillfiction.com/the-dark-rider" alt="Mythrill" target="_blank">
-						<div class="card">
-						<div class="wrapper">
-							<img src="https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg" class="cover-image" />
-						</div>
-						<img src="https://ggayane.github.io/css-experiments/cards/dark_rider-title.png" class="title" />
-						<img src="https://ggayane.github.io/css-experiments/cards/dark_rider-character.webp" class="character" />
-						</div>
-					</a>
-				</div>
-			</section>
-			<section id="space">
-				<div class="stars"></div>
-				<div class="twinkling"></div>
-				<div class="container">
-					<div class="basic">
-					  <h2>Basic</h2>
-					  <h4>Free</h4>
-					  <h6>3,000 monthly visitors</h6>
-					  <ul class="basic-ul">
-						<li class="basic-li">Limited Reports</li>
-						<li class="basic-li">Unlimited Projects</li>
-						<li class="basic-li">Data storage for 1 year</li>
-					  </ul>
-					  <button class="basic-btn">Start now</button>
-					</div>
-					<div class="pro">
-					  <h2>Pro</h2>
-					  <h4>$19 / month</h4>
-					  <h6>10,000 monthly visitors</h6>
-					  <ul class="pro-ul">
-						<li class="pro-li">Unlimited Reports</li>
-						<li class="pro-li">15-day free trial</li>
-						<li class="pro-li">Data storage for 3 years</li>
-					  </ul>
-					  <button class="pro-btn">Try it</button>
-					</div>
-				  </div>
-			</section>
-			<section id="future">
-				<div class="stars"></div>
-				<div class="twinkling"></div>
-				<img class="me" src="http://gravatar.com/avatar/25b1fc64ba12614875c1e467d7e4c86e?s=512" alt="" />
-				<div class="social">
-				<a href="https://twitter.com/bphillips201"><i id="twitter" class="icon-twitter"></i></a>
-				<i id="github" class="icon-github"></i>
-				<i id="stack" class="icon-stackexchange"></i>
-				<i id="linkedin" class="icon-linkedin-sign"></i>
-				<i id="code" class="icon-code"></i>
-				<i id="plus" class="icon-google-plus-sign"></i>
-				<i id="mail" class="icon-envelope"></i> 
-				</div>
-			</section>
-		</div>
-		<a id="fixedlink" target="_blank" rel="nofollow noopener" href="">ACCEPT YOUR INFINITY POWER | ACTIVATE YOUR INFINITY MODE</a>
-		
-		<script id="rendered-js">
-			document.addEventListener('DOMContentLoaded', function () {
-			var header = document.getElementById('myHeader');
-			var page = document.getElementById('page');
-			var openMenuButton = document.getElementById('openmenu');
-		
-			window.addEventListener('scroll', function () {
-			page.classList.remove('menuopen');
-			if (window.scrollY >= 100) {
-				header.classList.add('sticky');
-			} else {
-				header.classList.remove('sticky');
-			}
-			});
-		
-			// Event listener to remove the sticky class when the button is clicked
-			openMenuButton.addEventListener('click', function () {
-			header.classList.remove('sticky');
-			page.classList.add('menuopen');
-			});
-		
-			var links = document.querySelectorAll('a[href^="#"]');
-		
-			links.forEach(function (link) {
-			link.addEventListener('click', function (event) {
-				// Prevent the default action
-				event.preventDefault();
-		
-				// Get the target element
-				var targetId = this.getAttribute('href');
-				var targetElement = document.querySelector(targetId);
-		
-				// Smooth scroll to target
-				if (targetElement) {
-				targetElement.scrollIntoView({
-					behavior: 'smooth' });
-		
-				}
-			});
-			});
-		});
-		//# sourceURL=pen.js
+          <a
+            href="https://www.mythrillfiction.com/force-mage"
+            alt="Mythrill"
+            target="_blank"
+          >
+            <div class="card">
+              <div class="wrapper">
+                <img
+                  src="https://ggayane.github.io/css-experiments/cards/force_mage-cover.jpg"
+                  class="cover-image"
+                />
+              </div>
+              <img
+                src="https://ggayane.github.io/css-experiments/cards/force_mage-title.png"
+                class="title"
+              />
+              <img
+                src="https://ggayane.github.io/css-experiments/cards/force_mage-character.webp"
+                class="character"
+              />
+            </div>
+          </a>
 
-		$(document).ready(function() {
-		$('i').hide();
-		})
+          <a
+            href="https://www.mythrillfiction.com/the-dark-rider"
+            alt="Mythrill"
+            target="_blank"
+          >
+            <div class="card">
+              <div class="wrapper">
+                <img
+                  src="https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg"
+                  class="cover-image"
+                />
+              </div>
+              <img
+                src="https://ggayane.github.io/css-experiments/cards/dark_rider-title.png"
+                class="title"
+              />
+              <img
+                src="https://ggayane.github.io/css-experiments/cards/dark_rider-character.webp"
+                class="character"
+              />
+            </div>
+          </a>
+        </div>
+      </section>
+      <section id="space">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+        <div class="container">
+          <div class="basic">
+            <h2>Basic</h2>
+            <h4>Free</h4>
+            <h6>3,000 monthly visitors</h6>
+            <ul class="basic-ul">
+              <li class="basic-li">Limited Reports</li>
+              <li class="basic-li">Unlimited Projects</li>
+              <li class="basic-li">Data storage for 1 year</li>
+            </ul>
+            <button class="basic-btn">Start now</button>
+          </div>
+          <div class="pro">
+            <h2>Pro</h2>
+            <h4>$19 / month</h4>
+            <h6>10,000 monthly visitors</h6>
+            <ul class="pro-ul">
+              <li class="pro-li">Unlimited Reports</li>
+              <li class="pro-li">15-day free trial</li>
+              <li class="pro-li">Data storage for 3 years</li>
+            </ul>
+            <button class="pro-btn">Try it</button>
+          </div>
+        </div>
+      </section>
+      <section id="future">
+        <div class="stars"></div>
+        <div class="twinkling"></div>
+        <div class="clouds"></div>
+        <div class="box">
+          <h1>Регистрация</h1>
+          <input type="text" placeholder="Username" />
+          <input type="text" placeholder="Password" />
+          <button>Login</button>
+          <p>Not a member? <span>Sign Up</span></p>
+        </div>
+      </section>
+    </div>
+    <a id="fixedlink" target="_blank" rel="nofollow noopener" href=""
+      >ACCEPT YOUR INFINITY POWER | ACTIVATE YOUR INFINITY MODE</a
+    >
 
-		$(window).load(function() {
-		$('i').show();
+    <script id="rendered-js">
+      document.addEventListener("DOMContentLoaded", function () {
+        var header = document.getElementById("myHeader");
+        var page = document.getElementById("page");
+        var openMenuButton = document.getElementById("openmenu");
 
-		var twitterPos = $('#twitter').position();
-		var githubPos = $('#github').position();
-		var stackPos = $('#stack').position();
-		var linkedinPos = $('#linkedin').position();
-		var codePos = $('#code').position();
-		var plusPos = $('#plus').position();
-		var mailPos = $('#mail').position();
-		var imgPos = $('.me').position();
-		
-		$('i').css({
-			position: 'absolute',
-			zIndex: '1',
-			top: imgPos.top + 100,
-			left: '47%'
-		});
-		
-		setTimeout(function() {
-			$('#twitter').animate({
-			top: twitterPos.top + 10,
-			left: twitterPos.left - 10
-			}, 500);
-		}, 250);
-		
-		setTimeout(function() {
-			$('#twitter').animate({
-			top: twitterPos.top,
-			left: twitterPos.left
-			}, 250);
-			
-			$('#github').animate({
-			top: githubPos.top + 10,
-			left: githubPos.left - 6
-			}, 500);
-		}, 500);
-		
-		setTimeout(function() {
-			$('#github').animate({
-			top: githubPos.top,
-			left: githubPos.left
-			}, 250);
-			
-			$('#stack').animate({
-			top: stackPos.top + 10,
-			left: stackPos.left - 3
-			}, 500);
-		}, 750);
-		
-		setTimeout(function() {
-			$('#stack').animate({
-			top: stackPos.top,
-			left: stackPos.left
-			}, 250);
-			
-			$('#linkedin').animate({
-			top: linkedinPos.top + 10,
-			left: linkedinPos.left
-			}, 500);
-		}, 1000);
-		
-		setTimeout(function() {
-			$('#linkedin').animate({
-			top: linkedinPos.top,
-			left: linkedinPos.left
-			}, 250);
-			
-			$('#code').animate({
-			top: codePos.top + 10,
-			left: codePos.left + 3
-			}, 500);
-		}, 1250);
-		
-		setTimeout(function() {
-			$('#code').animate({
-			top: codePos.top,
-			left: codePos.left
-			}, 250);
-			
-			$('#plus').animate({
-			top: plusPos.top + 10,
-			left: plusPos.left + 6
-			}, 500);
-		}, 1500);
-		
-		setTimeout(function() {
-			$('#plus').animate({
-			top: plusPos.top,
-			left: plusPos.left
-			}, 250);
-			
-			$('#mail').animate({
-			top: mailPos.top + 10,
-			left: mailPos.left + 10
-			}, 500);
-		}, 1750);
-		
-		setTimeout(function() {
-			$('#mail').animate({
-			top: mailPos.top,
-			left: mailPos.left
-			}, 250);
-		}, 2000);
-		
-		})
-		</script>
-	</body>
+        window.addEventListener("scroll", function () {
+          page.classList.remove("menuopen");
+          if (window.scrollY >= 100) {
+            header.classList.add("sticky");
+          } else {
+            header.classList.remove("sticky");
+          }
+        });
+
+        // Event listener to remove the sticky class when the button is clicked
+        openMenuButton.addEventListener("click", function () {
+          header.classList.remove("sticky");
+          page.classList.add("menuopen");
+        });
+
+        var links = document.querySelectorAll('a[href^="#"]');
+
+        links.forEach(function (link) {
+          link.addEventListener("click", function (event) {
+            // Prevent the default action
+            event.preventDefault();
+
+            // Get the target element
+            var targetId = this.getAttribute("href");
+            var targetElement = document.querySelector(targetId);
+
+            // Smooth scroll to target
+            if (targetElement) {
+              targetElement.scrollIntoView({
+                behavior: "smooth",
+              });
+            }
+          });
+        });
+      });
+      //# sourceURL=pen.js
+
+      $(document).ready(function () {
+        $("i").hide();
+      });
+
+      $(window).load(function () {
+        $("i").show();
+
+        var twitterPos = $("#twitter").position();
+        var githubPos = $("#github").position();
+        var stackPos = $("#stack").position();
+        var linkedinPos = $("#linkedin").position();
+        var codePos = $("#code").position();
+        var plusPos = $("#plus").position();
+        var mailPos = $("#mail").position();
+        var imgPos = $(".me").position();
+
+        $("i").css({
+          position: "absolute",
+          zIndex: "1",
+          top: imgPos.top + 100,
+          left: "47%",
+        });
+
+        setTimeout(function () {
+          $("#twitter").animate(
+            {
+              top: twitterPos.top + 10,
+              left: twitterPos.left - 10,
+            },
+            500
+          );
+        }, 250);
+
+        setTimeout(function () {
+          $("#twitter").animate(
+            {
+              top: twitterPos.top,
+              left: twitterPos.left,
+            },
+            250
+          );
+
+          $("#github").animate(
+            {
+              top: githubPos.top + 10,
+              left: githubPos.left - 6,
+            },
+            500
+          );
+        }, 500);
+
+        setTimeout(function () {
+          $("#github").animate(
+            {
+              top: githubPos.top,
+              left: githubPos.left,
+            },
+            250
+          );
+
+          $("#stack").animate(
+            {
+              top: stackPos.top + 10,
+              left: stackPos.left - 3,
+            },
+            500
+          );
+        }, 750);
+
+        setTimeout(function () {
+          $("#stack").animate(
+            {
+              top: stackPos.top,
+              left: stackPos.left,
+            },
+            250
+          );
+
+          $("#linkedin").animate(
+            {
+              top: linkedinPos.top + 10,
+              left: linkedinPos.left,
+            },
+            500
+          );
+        }, 1000);
+
+        setTimeout(function () {
+          $("#linkedin").animate(
+            {
+              top: linkedinPos.top,
+              left: linkedinPos.left,
+            },
+            250
+          );
+
+          $("#code").animate(
+            {
+              top: codePos.top + 10,
+              left: codePos.left + 3,
+            },
+            500
+          );
+        }, 1250);
+
+        setTimeout(function () {
+          $("#code").animate(
+            {
+              top: codePos.top,
+              left: codePos.left,
+            },
+            250
+          );
+
+          $("#plus").animate(
+            {
+              top: plusPos.top + 10,
+              left: plusPos.left + 6,
+            },
+            500
+          );
+        }, 1500);
+
+        setTimeout(function () {
+          $("#plus").animate(
+            {
+              top: plusPos.top,
+              left: plusPos.left,
+            },
+            250
+          );
+
+          $("#mail").animate(
+            {
+              top: mailPos.top + 10,
+              left: mailPos.left + 10,
+            },
+            500
+          );
+        }, 1750);
+
+        setTimeout(function () {
+          $("#mail").animate(
+            {
+              top: mailPos.top,
+              left: mailPos.left,
+            },
+            250
+          );
+        }, 2000);
+      });
+    </script>
+  </body>
 </html>
